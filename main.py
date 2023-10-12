@@ -43,3 +43,5 @@ while running:
 pygame.quit()
 
 #### i was here
+def jens(dawd):
+    return dawd
