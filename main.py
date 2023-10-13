@@ -8,7 +8,7 @@ class Direction(Enum):
     RIGHT = 3
 
 PLAYER_RADIUS = 10
-MOVE_AMOUNT = 300
+MOVE_AMOUNT = 5
 
 def is_black(color):
         return color.r == 0 and color.g == 0 and color.b == 0
@@ -20,18 +20,16 @@ def get_next_pos(current_pos, direction):
     x = current_pos.x
     y = current_pos.y
     if direction == Direction.UP:
-        y -= MOVE_AMOUNT * dt
+        y -= MOVE_AMOUNT
     elif direction == Direction.DOWN:
-        y += MOVE_AMOUNT * dt
+        y += MOVE_AMOUNT
     elif direction == Direction.LEFT:
-        x -= MOVE_AMOUNT * dt
+        x -= MOVE_AMOUNT
     if direction == Direction.RIGHT:
-        x += MOVE_AMOUNT * dt
+        x += MOVE_AMOUNT
     return (x, y)
 
-def is_valid_movement(current_pos, direction):
-    x, y = get_next_pos(current_pos, direction)
-
+def is_valid_position(x, y):
     up_color = get_color_at(x, y - PLAYER_RADIUS)
     down_color = get_color_at(x, y + PLAYER_RADIUS)
     right_color = get_color_at(x + PLAYER_RADIUS, y)
@@ -45,31 +43,23 @@ def is_valid_movement(current_pos, direction):
     return True
 
 def move(player_pos, direction):
-    if is_valid_movement(player_pos, direction) == False:
-        return
-
-    if direction == Direction.UP:
-        player_pos.y -= MOVE_AMOUNT * dt
-    elif direction == Direction.DOWN:
-        player_pos.y += MOVE_AMOUNT * dt
-    elif direction == Direction.LEFT:
-        player_pos.x -= MOVE_AMOUNT * dt
-    elif direction == Direction.RIGHT:
-        player_pos.x += MOVE_AMOUNT * dt
-
+    next_x, next_y = get_next_pos(player_pos, direction)
+    if is_valid_position(next_x, next_y):
+        player_pos.x = next_x
+        player_pos.y = next_y
 
 
 
 pygame.init()
-width = 1280
-height = 720
-screen = pygame.display.set_mode((width, height))
+WIDTH = 1280
+HEIGHT = 720
+FPS = 60
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 maze = pygame.image.load("maze_1.png").convert()
-maze = pygame.transform.scale(maze, (width, height))
+maze = pygame.transform.scale(maze, (WIDTH, HEIGHT))
 player_pos = pygame.Vector2(screen.get_width() / 2 - 50, screen.get_height() / 2)
 
-dt = 0
 running = True
 while running:
     for event in pygame.event.get():
@@ -90,6 +80,6 @@ while running:
         move(player_pos, Direction.RIGHT)
 
     pygame.display.flip()
-    dt = clock.tick(60) / 1000
+    dt = clock.tick(FPS)
 
 pygame.quit()
