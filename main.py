@@ -18,6 +18,15 @@ HEIGHT = 720
 FPS = 60
 
 
+def draw_game_over_screen():
+   font = pygame.font.SysFont('arial', 40)
+   title = font.render('Game Over', True, ("red"))
+   restart_button = font.render('Press Esc to quit', True, ("red"))
+   screen.blit(title, (WIDTH/2 - title.get_width()/2, HEIGHT/2 - title.get_height()/3))
+   screen.blit(restart_button, (WIDTH/2 - restart_button.get_width()/2, HEIGHT/1.9 + restart_button.get_height()))
+   pygame.display.update()
+
+
 text_font = pygame.font.SysFont("Arial", 30)
 
 def draw_text(text, font, color, x, y):
@@ -32,16 +41,17 @@ def is_black(color):
 def distance_between_players():
     dist = pygame.math.Vector2(player_pos.x, player_pos.y).distance_to((player_pos2.x,player_pos2.y))
     return dist
+        
 
 def check_game_over():
     if distance_between_players() < PLAYER_RANGE:
-        game_over()
+        game_state = "game_over"
+        return game_state
 
-def game_over():
-    draw_text("Defeat", text_font, (255,0,0), (WIDTH/2) - 30, HEIGHT/2)
-    player_1.color = (0,0,0)
-    player_2.color = (0,0,0)
-
+    else:
+        game_state = "game"
+        return game_state
+    
 
 def get_color_at(x, y):
     return screen.get_at([int(x), int(y)])
@@ -94,6 +104,7 @@ class Player:
     def draw_player(self):
         pygame.draw.circle(screen, self.color, self.player_pos, self.size, self.player_range)
 
+
 def player_movement(keys, player_pos):
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w]:
@@ -128,30 +139,40 @@ player_pos2 = pygame.Vector2(screen.get_width() / 2 - 100, screen.get_height() /
 player_1 = Player(MOVE_AMOUNT, "red", player_pos, PLAYER_RADIUS, PLAYER_RANGE)
 player_2 = Player(MOVE_AMOUNT, "blue", player_pos2, PLAYER_RADIUS, PLAYER_RANGE)
 
+
+game_state = "game"
 running = True
+
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
+    
     screen.blit(maze, (0, 0))
-    # pygame.draw.circle(screen, "red", player_pos, PLAYER_RADIUS)
+    keys = pygame.key.get_pressed()
+    player_1.draw_player()
+    player_2.draw_player()
 
     distance_between_players()
     check_game_over()
 
-    keys = pygame.key.get_pressed()
+    if check_game_over() == "game":
+        
+        player_movement(keys, player_pos)
+        player2_movement(keys, player_pos2)
+        
 
-    player_1.draw_player()
-    player_2.draw_player()
-    player_movement(keys, player_pos)
-    player2_movement(keys, player_pos2)
-
-    
-    
-
+    elif check_game_over() == "game_over":
+        draw_game_over_screen()
+        if keys[pygame.K_ESCAPE]:
+            running = False
+            
+        
     pygame.display.flip()
     dt = clock.tick(FPS)
+
     
 
 pygame.quit()
