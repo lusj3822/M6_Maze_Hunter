@@ -7,7 +7,7 @@ pygame.init()
 
 MOVE_AMOUNT = 5
 PLAYER_RADIUS = 7
-PLAYER_RANGE = 15
+PLAYER_RANGE = 10
 
 WIDTH = 749
 HEIGHT = 749
@@ -15,6 +15,7 @@ FPS = 60
 
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Maze Hunter")
 clock = pygame.time.Clock()
 maze = pygame.image.load("maze_3.png").convert()
 maze = pygame.transform.scale(maze, (WIDTH, HEIGHT))
@@ -44,6 +45,21 @@ player_2 = Player(MOVE_AMOUNT, "blue", player_pos2, PLAYER_RADIUS, PLAYER_RANGE,
 
 game = Game(screen, [player_1, player_2])
 
+
+def draw_fog_of_war():
+    surface1 = screen.convert_alpha()
+    
+    fog_of_war_size = 50
+
+    pygame.draw.circle(surface1, (0, 0, 0, 255), (player_1.player_pos.x, player_1.player_pos.y), 2000) # GIGANTISK SVART CIRKEL SOM GÖR ALLTING SVART
+    
+
+    pygame.draw.circle(surface1, (255, 0, 0, 0), (player_1.player_pos.x, player_1.player_pos.y), fog_of_war_size)
+    pygame.draw.circle(surface1, (255, 0, 0, 0), (player_2.player_pos.x, player_2.player_pos.y), fog_of_war_size)
+
+    screen.blit(surface1, (0,0))
+
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -51,7 +67,14 @@ while running:
             running = False
 
     
+    
     screen.blit(maze, (0, 0))
+    
+    if keys[pygame.K_LSHIFT]:
+        draw_fog_of_war()
+
+    
+
     keys = pygame.key.get_pressed()
     player_1.draw_player(screen)
     player_2.draw_player(screen)
