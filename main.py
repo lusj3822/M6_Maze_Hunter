@@ -74,7 +74,7 @@ while running:
         player_1.player_pos = player_pos
 
         player_pos2 = pygame.Vector2(screen.get_width() / 2 - 100, screen.get_height() / 2)
-        player_1.player_pos = player_pos2
+        player_2.player_pos = player_pos2
             
         
     pygame.display.flip()
