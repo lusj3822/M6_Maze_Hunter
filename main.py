@@ -47,6 +47,12 @@ def is_game_over():
     if distance_between_players() <= PLAYER_RANGE:
         return True
     
+    if player_pos.y < PLAYER_RANGE:
+        return True
+    
+    if player_pos.y > HEIGHT - PLAYER_RANGE:
+        return True
+
     return False
 
 def get_color_at(x, y):
@@ -153,6 +159,7 @@ while running:
     player_2.draw_player()
 
     distance_between_players()
+
 
     if not is_game_over():
         
