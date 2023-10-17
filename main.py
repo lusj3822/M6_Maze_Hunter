@@ -45,7 +45,6 @@ player_2 = Player(MOVE_AMOUNT, "blue", player_pos2, PLAYER_RADIUS, PLAYER_RANGE,
 
 game = Game(screen, [player_1, player_2])
 
-
 def draw_fog_of_war():
     surface1 = screen.convert_alpha()
     
