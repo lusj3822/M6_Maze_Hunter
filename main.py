@@ -6,17 +6,17 @@ pygame.init()
 
 
 MOVE_AMOUNT = 5
-PLAYER_RADIUS = 10
-PLAYER_RANGE = 20
+PLAYER_RADIUS = 7
+PLAYER_RANGE = 15
 
-WIDTH = 1280
-HEIGHT = 720
+WIDTH = 749
+HEIGHT = 749
 FPS = 60
 
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
-maze = pygame.image.load("maze_1.png").convert()
+maze = pygame.image.load("maze_3.png").convert()
 maze = pygame.transform.scale(maze, (WIDTH, HEIGHT))
 
 def draw_game_over_screen():
