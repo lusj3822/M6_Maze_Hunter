@@ -21,7 +21,7 @@ FPS = 60
 def draw_game_over_screen():
    font = pygame.font.SysFont('arial', 40)
    title = font.render('Game Over', True, ("red"))
-   restart_button = font.render('Press Esc to quit', True, ("red"))
+   restart_button = font.render('Press Esc to restart', True, ("red"))
    screen.blit(title, (WIDTH/2 - title.get_width()/2, HEIGHT/2 - title.get_height()/3))
    screen.blit(restart_button, (WIDTH/2 - restart_button.get_width()/2, HEIGHT/1.9 + restart_button.get_height()))
    pygame.display.update()
@@ -42,16 +42,12 @@ def distance_between_players():
     dist = pygame.math.Vector2(player_pos.x, player_pos.y).distance_to((player_pos2.x,player_pos2.y))
     return dist
         
-
-def check_game_over():
-    if distance_between_players() < PLAYER_RANGE:
-        game_state = "game_over"
-        return game_state
-
-    else:
-        game_state = "game"
-        return game_state
     
+def is_game_over():
+    if distance_between_players() <= PLAYER_RANGE:
+        return True
+    
+    return False
 
 def get_color_at(x, y):
     return screen.get_at([int(x), int(y)])
@@ -133,6 +129,7 @@ clock = pygame.time.Clock()
 maze = pygame.image.load("maze_1.png").convert()
 maze = pygame.transform.scale(maze, (WIDTH, HEIGHT))
 
+
 player_pos = pygame.Vector2(screen.get_width() / 2 - 50, screen.get_height() / 2)
 player_pos2 = pygame.Vector2(screen.get_width() / 2 - 100, screen.get_height() / 2)
 
@@ -156,18 +153,23 @@ while running:
     player_2.draw_player()
 
     distance_between_players()
-    check_game_over()
 
-    if check_game_over() == "game":
+    if not is_game_over():
         
         player_movement(keys, player_pos)
         player2_movement(keys, player_pos2)
         
 
-    elif check_game_over() == "game_over":
+    elif is_game_over():
         draw_game_over_screen()
-        if keys[pygame.K_ESCAPE]:
-            running = False
+
+    if keys[pygame.K_ESCAPE]:
+        #running = False
+        player_pos = pygame.Vector2(screen.get_width() / 2 - 50, screen.get_height() / 2)
+        player_1 = Player(MOVE_AMOUNT, "red", player_pos, PLAYER_RADIUS, PLAYER_RANGE)
+
+        player_pos2 = pygame.Vector2(screen.get_width() / 2 - 100, screen.get_height() / 2)
+        player_2 = Player(MOVE_AMOUNT, "blue", player_pos2, PLAYER_RADIUS, PLAYER_RANGE)
             
         
     pygame.display.flip()
