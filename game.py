@@ -2,16 +2,52 @@ import pygame
 from Direction import Direction
 
 class Game:
-    def __init__(self, screen, players):
-          self.screen = screen
-          self.players = players
+    def __init__(self, width, height, player1, player2):
+          self.screen = pygame.display.set_mode((width, height))
+          self.maze = pygame.image.load("maze_3.png").convert()
+          self.maze = pygame.transform.scale(self.maze, (width, height))
+          pygame.display.set_caption("Maze Hunter")
+          self.clock = pygame.time.Clock()
+          self.player1 = player1
+          self.player2 = player2
+
+    def refresh_maze(self):
+        self.screen.blit(self.maze, (0, 0))
+
+    def draw_fog_of_war(self):
+        surface1 = self.screen.convert_alpha()
+        fog_of_war_size = 50
+
+        pygame.draw.circle(surface1, (0, 0, 0, 255), (0, 0), 2000) # GIGANTISK SVART CIRKEL SOM GÖR ALLTING SVART
+        for player in [self.player1, self.player2]:
+            pygame.draw.circle(surface1, (255, 0, 0, 0), (player.pos.x, player.pos.y), fog_of_war_size)
+
+        self.screen.blit(surface1, (0,0))
+
+
+    def draw_player(self, player):
+        pygame.draw.circle(self.screen, player.color, player.pos, player.size, player.range)
           
+    def draw_game_over_screen(self):
+       font = pygame.font.SysFont('arial', 40)
+       title = font.render('Game Over', True, ("red"))
+       restart_button = font.render('Press Esc to restart', True, ("red"))
+       width = self.screen.get_width();
+       height = self.screen.get_height();
+       self.screen.blit(title, (width/2 - title.get_width()/2, height/2 - title.get_height()/3))
+       self.screen.blit(restart_button, (width/2 - restart_button.get_width()/2, height/1.9 + restart_button.get_height()))
+       pygame.display.update()
+
+    def draw_text(self, text, color, x, y):
+        font = pygame.font.SysFont("Arial", 30)
+        img = font.render(text, True, color)
+        self.screen.blit(img, (x, y))
     
     def move(self, player, direction):
         next_x, next_y = player.get_next_pos(direction)
         if self.is_valid_position(next_x, next_y, player.size):
-            player.player_pos.x = next_x
-            player.player_pos.y = next_y
+            player.pos.x = next_x
+            player.pos.y = next_y
 
     def player_movement(self, player):
         keys = pygame.key.get_pressed()
@@ -25,11 +61,11 @@ class Game:
             self.move(player, Direction.RIGHT)
 
 
-    def is_valid_position(self, x, y, PLAYER_RADIUS):
-        up_color = self.get_color_at(x, y - PLAYER_RADIUS)
-        down_color = self.get_color_at(x, y + PLAYER_RADIUS)
-        right_color = self.get_color_at(x + PLAYER_RADIUS, y)
-        left_color = self.get_color_at(x - PLAYER_RADIUS, y)
+    def is_valid_position(self, x, y, player_size):
+        up_color = self.get_color_at(x, y - player_size)
+        down_color = self.get_color_at(x, y + player_size)
+        right_color = self.get_color_at(x + player_size, y)
+        left_color = self.get_color_at(x - player_size, y)
         if (is_black(up_color) or
                 is_black(down_color) or
                 is_black(left_color) or
@@ -37,31 +73,26 @@ class Game:
             return False
         
         return True
-    
+
+
+    def is_game_over(self):
+        if self.distance_between_players() <= (self.player1.range or self.player2.range):
+            return True
+        
+        if self.player1.pos.y < self.player1.range or self.player2.pos.y < self.player2.range:
+            return True
+        
+        height = self.screen.get_height()
+        if self.player1.pos.y > height - self.player1.range or self.player2.pos.y > height - self.player2.range:
+            return True
+        
+        return False
+
+    def distance_between_players(self):
+        return self.player1.pos.distance_to(self.player2.pos)
+        
     def get_color_at(self, x, y):
         return self.screen.get_at([int(x), int(y)])
 
 def is_black(color):
         return color.r == 0 and color.g == 0 and color.b == 0
-
-
-def distance_between_players(player1, player2):
-    dist = pygame.math.Vector2(player1.player_pos.x, player1.player_pos.y).distance_to((player2.player_pos.x, player2.player_pos.y))
-    return dist
-        
-    
-def is_game_over(player1, player2, PLAYER_RANGE):
-    if distance_between_players(player1, player2) <= PLAYER_RANGE:
-        return True
-    
-    if player1.player_pos.y < PLAYER_RANGE or player2.player_pos.y < PLAYER_RANGE:
-        return True
-    
-    _, height = pygame.display.get_surface().get_size()
-    if player1.player_pos.y > height - PLAYER_RANGE or player2.player_pos.y > height - PLAYER_RANGE:
-        return True
-    
-    return False
-
-
-

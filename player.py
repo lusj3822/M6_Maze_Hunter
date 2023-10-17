@@ -1,22 +1,21 @@
 import pygame
-from game import Game
 from Direction import Direction
 
 class Player:
-    def __init__(self, speed, color, player_pos, size, player_range, movement_keys):
-        self.speed = speed
+    def __init__(self, color, x, y, movement_keys):
+        self.speed = 5
         self.color = color
-        self.player_pos = player_pos
-        self.size = size
-        self.player_range = player_range
+        self.set_position(x, y)
+        self.size = 7
+        self.range = 15
         self.movement_keys = movement_keys
 
-    def draw_player(self, screen):
-        pygame.draw.circle(screen, self.color, self.player_pos, self.size, self.player_range)
+    def set_position(self, x, y):
+        self.pos = pygame.Vector2(x, y)
 
     def get_next_pos(self, direction):
-        x = self.player_pos.x
-        y = self.player_pos.y
+        x = self.pos.x
+        y = self.pos.y
         if direction == Direction.UP:
             y -= self.speed
         elif direction == Direction.DOWN:
@@ -27,6 +26,3 @@ class Player:
             x += self.speed
 
         return (x, y)
-
-    
-    
