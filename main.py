@@ -35,8 +35,6 @@ def draw_text(text, font, color, x, y):
     screen.blit(img, (x, y))
 
 
-
-
 player_pos = pygame.Vector2(screen.get_width() / 2 - 50, screen.get_height() / 2)
 player_pos2 = pygame.Vector2(screen.get_width() / 2 - 100, screen.get_height() / 2)
 
@@ -46,7 +44,6 @@ player_2 = Player(MOVE_AMOUNT, "blue", player_pos2, PLAYER_RADIUS, PLAYER_RANGE,
 
 game = Game(screen, [player_1, player_2])
 
-game_state = "game"
 running = True
 while running:
     for event in pygame.event.get():
@@ -67,14 +64,15 @@ while running:
         game.player_movement(player_2)
     else:
         draw_game_over_screen()
-
     if keys[pygame.K_ESCAPE]:
         #running = False
         player_pos = pygame.Vector2(screen.get_width() / 2 - 50, screen.get_height() / 2)
         player_1.player_pos = player_pos
 
         player_pos2 = pygame.Vector2(screen.get_width() / 2 - 100, screen.get_height() / 2)
-        player_1.player_pos = player_pos2
+        player_2.player_pos = player_pos2
+
+    
             
         
     pygame.display.flip()
