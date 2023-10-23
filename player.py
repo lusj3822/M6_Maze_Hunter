@@ -6,7 +6,7 @@ class Player:
     def __init__(self, color, movement_keys):
         self.speed = Player.INITIAL_SPEED
         self.color = color
-        self.size = 16
+        self.size = 14
         self.movement_keys = movement_keys
 
     def set_position(self, x, y):

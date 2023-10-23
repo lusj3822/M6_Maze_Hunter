@@ -1,6 +1,6 @@
 import pygame
 from player import Player
-from game import Game
+from game import *
 
 FPS = 60
 WIDTH = 749
@@ -37,14 +37,16 @@ while running:
             player.speed += 1
             game.powerup = None
 
-    game_over = game.is_game_over()
-    if not game_over:
-        game.player_movement(game.player1)
-        game.player_movement(game.player2)
-    else:
-        game.draw_game_over_screen()
+    if game.is_game_over():
+        if game.state == GameState.HUNTER_WON:
+            game.draw_game_over_screen("Hunter won") 
+        elif game.state == GameState.PRISONER_WON:
+            game.draw_game_over_screen("Prisoner won")
         if keys[pygame.K_ESCAPE]:
             game.reset()
+    else:
+        game.player_movement(game.player1)
+        game.player_movement(game.player2)
             
         
     pygame.display.flip()

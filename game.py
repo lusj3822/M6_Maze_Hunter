@@ -1,7 +1,18 @@
 import pygame
+from enum import Enum
 from random import randrange
 from player import Player
-from Direction import Direction
+
+class Direction(Enum):
+    UP = 0
+    DOWN = 1
+    LEFT = 2
+    RIGHT = 3
+
+class GameState(Enum):
+    PLAYING = 0
+    HUNTER_WON = 1
+    PRISONER_WON = 2
 
 class Game:
     POWERUP_SIZE = 14
@@ -18,6 +29,7 @@ class Game:
           self.powerup = None
 
     def start(self):
+        self.game_state = GameState.PLAYING
         x1, y1 = self.get_random_valid_location(self.player1.size)
         x2, y2 = self.get_random_valid_location(self.player2.size)
         self.player1.set_position(x1, y1)
@@ -66,9 +78,9 @@ class Game:
     def draw_player(self, player):
         pygame.draw.rect(self.screen, player.color, pygame.Rect(player.pos, (player.size, player.size)))
           
-    def draw_game_over_screen(self):
+    def draw_game_over_screen(self, text):
        font = pygame.font.SysFont('arial', 40)
-       title = font.render('Game Over', True, ("red"))
+       title = font.render(text, True, ("red"))
        restart_button = font.render('Press Esc to restart', True, ("red"))
        width = self.screen.get_width();
        height = self.screen.get_height();
@@ -145,10 +157,12 @@ class Game:
 
     def is_game_over(self):
         if self.distance_between_players() <= (self.player1.size or self.player2.size):
+            self.state = GameState.HUNTER_WON
             return True
 
         for player in [self.player1, self.player2]:
             if self.is_on_edge_of_maze(player):
+                self.state = GameState.PRISONER_WON
                 return True
         
         return False
