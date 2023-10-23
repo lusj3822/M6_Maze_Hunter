@@ -11,8 +11,8 @@ PLAYER_1_START_Y = 370
 PLAYER_2_START_X = 250
 PLAYER_2_START_Y = 370
 
-player_1 = Player("red", PLAYER_1_START_X, PLAYER_1_START_Y, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d])
-player_2 = Player("blue", PLAYER_2_START_X, PLAYER_2_START_Y, [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT])
+player_1 = Player("purple4", PLAYER_1_START_X, PLAYER_1_START_Y, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d])
+player_2 = Player("firebrick", PLAYER_2_START_X, PLAYER_2_START_Y, [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT])
 game = Game(WIDTH, HEIGHT, player_1, player_2)
 
 pygame.init()

@@ -29,7 +29,7 @@ class Game:
 
     def draw_powerup(self):
         if self.powerup != None:
-            pygame.draw.rect(self.screen, "green", self.powerup)
+            pygame.draw.rect(self.screen, "darkgreen", self.powerup)
 
     def create_powerup(self):
         while True:
