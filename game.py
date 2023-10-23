@@ -3,7 +3,7 @@ from random import randrange
 from Direction import Direction
 
 class Game:
-    POWERUP_RADIUS = 7
+    POWERUP_SIZE = 10
     def __init__(self, width, height, player1, player2):
           self.screen = pygame.display.set_mode((width, height))
           self.maze = pygame.image.load("maze_3.png").convert()
@@ -34,10 +34,10 @@ class Game:
     def create_powerup(self):
         while True:
             x, y = self.get_random_location()
-            if self.is_valid_position(x, y, Game.POWERUP_RADIUS):
+            if self.is_valid_position(x, y, Game.POWERUP_SIZE):
                 self.powerup = pygame.Rect(
-                        (x - Game.POWERUP_RADIUS, y - Game.POWERUP_RADIUS),
-                        (Game.POWERUP_RADIUS * 2, Game.POWERUP_RADIUS * 2))
+                        (x, y),
+                        (Game.POWERUP_SIZE, Game.POWERUP_SIZE))
                 return
 
     def get_random_location(self):
@@ -46,7 +46,7 @@ class Game:
         return x, y
 
     def draw_player(self, player):
-        pygame.draw.circle(self.screen, player.color, player.pos, player.radius, player.range)
+        pygame.draw.rect(self.screen, player.color, pygame.Rect(player.pos, (player.size, player.size)))
           
     def draw_game_over_screen(self):
        font = pygame.font.SysFont('arial', 40)
@@ -64,10 +64,24 @@ class Game:
         self.screen.blit(img, (x, y))
     
     def move(self, player, direction):
-        next_x, next_y = player.get_next_pos(direction)
-        if self.is_valid_position(next_x, next_y, player.radius):
-            player.pos.x = next_x
-            player.pos.y = next_y
+        x_diff = 0
+        y_diff = 0
+        if direction == Direction.UP:
+            y_diff = -1
+        elif direction == Direction.DOWN:
+            y_diff = 1
+        elif direction == Direction.LEFT:
+            x_diff = -1
+        elif direction == Direction.RIGHT:
+            x_diff = 1
+
+        for _ in range(player.speed):
+            next_x = player.pos.x + x_diff
+            next_y = player.pos.y + y_diff
+            if self.is_valid_position(next_x, next_y, player.size):
+                player.pos.x = next_x
+                player.pos.y = next_y
+            else: return
 
     def player_movement(self, player):
         keys = pygame.key.get_pressed()
@@ -81,33 +95,39 @@ class Game:
             self.move(player, Direction.RIGHT)
 
 
-    def is_valid_position(self, x, y, object_radius):
-        up = (x, y - object_radius)
-        down = (x, y + object_radius)
-        right = (x + object_radius, y)
-        left = (x - object_radius, y)
-        for x, y in [up, down, right, left]:
-            if self.is_outside_maze(x, y) or is_black(self.get_color_at(x, y)): 
+    def is_valid_position(self, x, y, size):
+        top_left = (x, y)
+        top_middle = (x + size / 2, y)
+        top_right = (x + size, y)
+        bottom_left = (x, y + size)
+        bottom_middle = (x + size / 2, y + size)
+        bottom_right = (x + size, y + size)
+        middle = (x + size / 2, y + size / 2)
+        for pos_x, pos_y in [top_left, top_middle, top_right, bottom_left, bottom_middle, bottom_right, middle]:
+            if self.is_outside_maze(pos_x, pos_y, size) or is_black(self.get_color_at(pos_x, pos_y)): 
                 return False
         return True
 
-    def is_outside_maze(self, x, y):
+    def is_outside_maze(self, x, y, size):
         return (x < 0 
                 or x > self.screen.get_width() - 1 
                 or y < 0 
                 or y > self.screen.get_height() - 1)
 
+    def is_on_edge_of_maze(self, player):
+        return (player.pos.x == 0 
+                or player.pos.x + player.size == self.screen.get_width() - 1
+                or player.pos.y == 0
+                or player.pos.y + player.size == self.screen.get_height() - 1)
+
 
     def is_game_over(self):
-        if self.distance_between_players() <= (self.player1.range or self.player2.range):
+        if self.distance_between_players() <= (self.player1.size or self.player2.size):
             return True
-        
-        if self.player1.pos.y < self.player1.range or self.player2.pos.y < self.player2.range:
-            return True
-        
-        height = self.screen.get_height()
-        if self.player1.pos.y > height - self.player1.range or self.player2.pos.y > height - self.player2.range:
-            return True
+
+        for player in [self.player1, self.player2]:
+            if self.is_on_edge_of_maze(player):
+                return True
         
         return False
 
