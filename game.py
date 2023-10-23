@@ -120,8 +120,12 @@ class Game:
         bottom_left = (x, y + size)
         bottom_middle = (x + size / 2, y + size)
         bottom_right = (x + size, y + size)
-        middle = (x + size / 2, y + size / 2)
-        for pos_x, pos_y in [top_left, top_middle, top_right, bottom_left, bottom_middle, bottom_right, middle]:
+        middle_left = (x, y + size / 2)
+        middle_right = (x + size, y + size / 2)
+        positions = [top_left, top_middle, top_right,
+                     bottom_left, bottom_middle, bottom_right,
+                     middle_left, middle_right]
+        for pos_x, pos_y in positions:
             if self.is_outside_maze(pos_x, pos_y) or is_black(self.get_color_at(pos_x, pos_y)): 
                 return False
         return True
