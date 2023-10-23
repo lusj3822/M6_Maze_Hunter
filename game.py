@@ -1,20 +1,32 @@
 import pygame
 from random import randrange
+from player import Player
 from Direction import Direction
 
 class Game:
     POWERUP_SIZE = 14
     SPAWN_POWERUP = pygame.USEREVENT
+
     def __init__(self, width, height, player1, player2):
           self.screen = pygame.display.set_mode((width, height))
           self.maze = pygame.image.load("maze_3.png").convert()
           self.maze = pygame.transform.scale(self.maze, (width, height))
-          pygame.display.set_caption("Maze Hunter")
-          self.clock = pygame.time.Clock()
-          pygame.time.set_timer(Game.SPAWN_POWERUP, 10000)
+          self.refresh_maze()
           self.player1 = player1
           self.player2 = player2
+          pygame.time.set_timer(Game.SPAWN_POWERUP, 10000)
           self.powerup = None
+
+    def start(self):
+        x1, y1 = self.get_random_valid_location(self.player1.size)
+        x2, y2 = self.get_random_valid_location(self.player2.size)
+        self.player1.set_position(x1, y1)
+        self.player2.set_position(x2, y2)
+
+    def reset(self):
+        self.player1.speed = Player.INITIAL_SPEED
+        self.player2.speed = Player.INITIAL_SPEED
+        self.start()
 
     def refresh_maze(self):
         self.screen.blit(self.maze, (0, 0))
@@ -34,13 +46,17 @@ class Game:
             pygame.draw.rect(self.screen, "darkgreen", self.powerup)
 
     def create_powerup(self):
+        x, y = self.get_random_valid_location(Game.POWERUP_SIZE) 
+        self.powerup = pygame.Rect(
+                    (int(x), int(y)),
+                    (Game.POWERUP_SIZE, Game.POWERUP_SIZE))
+
+    def get_random_valid_location(self, object_size):
         while True:
             x, y = self.get_random_location()
-            if self.is_valid_position(x, y, Game.POWERUP_SIZE):
-                self.powerup = pygame.Rect(
-                        (int(x), int(y)),
-                        (Game.POWERUP_SIZE, Game.POWERUP_SIZE))
-                return
+            if self.is_valid_position(x, y, object_size):
+                return x, y
+
 
     def get_random_location(self):
         x = randrange(self.screen.get_width());

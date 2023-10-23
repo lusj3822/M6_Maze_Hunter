@@ -1,21 +1,19 @@
 import pygame
 from player import Player
-from game import *
-
+from game import Game
 
 FPS = 60
 WIDTH = 749
 HEIGHT = 749
-PLAYER_1_START_X = 300
-PLAYER_1_START_Y = 370
-PLAYER_2_START_X = 250
-PLAYER_2_START_Y = 370
 
-player_1 = Player("purple4", PLAYER_1_START_X, PLAYER_1_START_Y, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d])
-player_2 = Player("firebrick", PLAYER_2_START_X, PLAYER_2_START_Y, [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT])
-game = Game(WIDTH, HEIGHT, player_1, player_2)
+player1 = Player("purple4", [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d])
+player2 = Player("firebrick", [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT])
+game = Game(WIDTH, HEIGHT, player1, player2)
+game.start()
 
 pygame.init()
+pygame.display.set_caption("Maze Hunter")
+clock = pygame.time.Clock()
 running = True
 while running:
     for event in pygame.event.get():
@@ -25,8 +23,8 @@ while running:
             game.create_powerup()
 
     game.refresh_maze()    
-    game.draw_player(player_1)
-    game.draw_player(player_2)
+    game.draw_player(game.player1)
+    game.draw_player(game.player2)
     game.draw_powerup()
 
     keys = pygame.key.get_pressed()
@@ -35,25 +33,23 @@ while running:
 
     if game.powerup != None:
         for player in [game.player1, game.player2]:
-            if pygame.Rect((int(player.pos.x), int(player.pos.y)), (player.size, player.size)).colliderect(game.powerup):
+            player_rect = pygame.Rect((int(player.pos.x), int(player.pos.y)), (player.size, player.size))
+            if player_rect.colliderect(game.powerup):
                 player.speed += 1
                 game.powerup = None
 
     game_over = game.is_game_over()
     if not game_over:
-        game.player_movement(player_1)
-        game.player_movement(player_2)
+        game.player_movement(game.player1)
+        game.player_movement(game.player2)
     else:
         game.draw_game_over_screen()
         if keys[pygame.K_ESCAPE]:
-            player_1.set_position(PLAYER_1_START_X, PLAYER_1_START_Y)
-            player_2.set_position(PLAYER_2_START_X, PLAYER_2_START_Y)
-            player_1.speed = Player.INITIAL_SPEED
-            player_2.speed = Player.INITIAL_SPEED
+            game.reset()
             
         
     pygame.display.flip()
-    game.clock.tick(FPS)
+    clock.tick(FPS)
     
 
     
