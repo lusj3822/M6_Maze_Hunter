@@ -6,7 +6,7 @@ class Player:
         self.speed = 5
         self.color = color
         self.set_position(x, y)
-        self.size = 7
+        self.radius = 7
         self.range = 15
         self.movement_keys = movement_keys
 

@@ -1,7 +1,9 @@
 import pygame
+from random import randrange
 from Direction import Direction
 
 class Game:
+    POWERUP_RADIUS = 7
     def __init__(self, width, height, player1, player2):
           self.screen = pygame.display.set_mode((width, height))
           self.maze = pygame.image.load("maze_3.png").convert()
@@ -10,6 +12,7 @@ class Game:
           self.clock = pygame.time.Clock()
           self.player1 = player1
           self.player2 = player2
+          self.powerup = None
 
     def refresh_maze(self):
         self.screen.blit(self.maze, (0, 0))
@@ -24,9 +27,26 @@ class Game:
 
         self.screen.blit(surface1, (0,0))
 
+    def draw_powerup(self):
+        if self.powerup != None:
+            pygame.draw.rect(self.screen, "green", self.powerup)
+
+    def create_powerup(self):
+        while True:
+            x, y = self.get_random_location()
+            if self.is_valid_position(x, y, Game.POWERUP_RADIUS):
+                self.powerup = pygame.Rect(
+                        (x - Game.POWERUP_RADIUS, y - Game.POWERUP_RADIUS),
+                        (Game.POWERUP_RADIUS * 2, Game.POWERUP_RADIUS * 2))
+                return
+
+    def get_random_location(self):
+        x = randrange(self.screen.get_width());
+        y = randrange(self.screen.get_height());
+        return x, y
 
     def draw_player(self, player):
-        pygame.draw.circle(self.screen, player.color, player.pos, player.size, player.range)
+        pygame.draw.circle(self.screen, player.color, player.pos, player.radius, player.range)
           
     def draw_game_over_screen(self):
        font = pygame.font.SysFont('arial', 40)
@@ -45,7 +65,7 @@ class Game:
     
     def move(self, player, direction):
         next_x, next_y = player.get_next_pos(direction)
-        if self.is_valid_position(next_x, next_y, player.size):
+        if self.is_valid_position(next_x, next_y, player.radius):
             player.pos.x = next_x
             player.pos.y = next_y
 
@@ -61,18 +81,21 @@ class Game:
             self.move(player, Direction.RIGHT)
 
 
-    def is_valid_position(self, x, y, player_size):
-        up_color = self.get_color_at(x, y - player_size)
-        down_color = self.get_color_at(x, y + player_size)
-        right_color = self.get_color_at(x + player_size, y)
-        left_color = self.get_color_at(x - player_size, y)
-        if (is_black(up_color) or
-                is_black(down_color) or
-                is_black(left_color) or
-                is_black(right_color)):
-            return False
-        
+    def is_valid_position(self, x, y, object_radius):
+        up = (x, y - object_radius)
+        down = (x, y + object_radius)
+        right = (x + object_radius, y)
+        left = (x - object_radius, y)
+        for x, y in [up, down, right, left]:
+            if self.is_outside_maze(x, y) or is_black(self.get_color_at(x, y)): 
+                return False
         return True
+
+    def is_outside_maze(self, x, y):
+        return (x < 0 
+                or x > self.screen.get_width() - 1 
+                or y < 0 
+                or y > self.screen.get_height() - 1)
 
 
     def is_game_over(self):

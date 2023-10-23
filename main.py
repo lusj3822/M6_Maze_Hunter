@@ -16,15 +16,20 @@ player_2 = Player("blue", PLAYER_2_START_X, PLAYER_2_START_Y, [pygame.K_UP, pyga
 game = Game(WIDTH, HEIGHT, player_1, player_2)
 
 pygame.init()
+SPAWN_POWERUP_EVENT = pygame.USEREVENT
+pygame.time.set_timer(SPAWN_POWERUP_EVENT, 1000)
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == SPAWN_POWERUP_EVENT:
+            game.create_powerup()
 
     game.refresh_maze()    
     game.draw_player(player_1)
     game.draw_player(player_2)
+    game.draw_powerup()
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LSHIFT]:
