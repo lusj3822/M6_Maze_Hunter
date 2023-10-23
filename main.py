@@ -31,12 +31,11 @@ while running:
     if keys[pygame.K_LSHIFT]:
         game.draw_fog_of_war()
 
-    if game.powerup != None:
-        for player in [game.player1, game.player2]:
-            player_rect = pygame.Rect((int(player.pos.x), int(player.pos.y)), (player.size, player.size))
-            if player_rect.colliderect(game.powerup):
-                player.speed += 1
-                game.powerup = None
+    for player in [game.player1, game.player2]:
+        player_rect = pygame.Rect((int(player.pos.x), int(player.pos.y)), (player.size, player.size))
+        if game.powerup != None and player_rect.colliderect(game.powerup):
+            player.speed += 1
+            game.powerup = None
 
     game_over = game.is_game_over()
     if not game_over:
