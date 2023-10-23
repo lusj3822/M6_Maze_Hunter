@@ -3,7 +3,7 @@ from random import randrange
 from Direction import Direction
 
 class Game:
-    POWERUP_SIZE = 10
+    POWERUP_SIZE = 14
     def __init__(self, width, height, player1, player2):
           self.screen = pygame.display.set_mode((width, height))
           self.maze = pygame.image.load("maze_3.png").convert()
