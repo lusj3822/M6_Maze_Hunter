@@ -1,8 +1,9 @@
 import pygame
 
 class Player:
+    INITIAL_SPEED = 5
     def __init__(self, color, x, y, movement_keys):
-        self.speed = 5
+        self.speed = Player.INITIAL_SPEED
         self.color = color
         self.set_position(x, y)
         self.size = 16

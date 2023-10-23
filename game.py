@@ -4,12 +4,14 @@ from Direction import Direction
 
 class Game:
     POWERUP_SIZE = 14
+    SPAWN_POWERUP = pygame.USEREVENT
     def __init__(self, width, height, player1, player2):
           self.screen = pygame.display.set_mode((width, height))
           self.maze = pygame.image.load("maze_3.png").convert()
           self.maze = pygame.transform.scale(self.maze, (width, height))
           pygame.display.set_caption("Maze Hunter")
           self.clock = pygame.time.Clock()
+          pygame.time.set_timer(Game.SPAWN_POWERUP, 10000)
           self.player1 = player1
           self.player2 = player2
           self.powerup = None
@@ -36,7 +38,7 @@ class Game:
             x, y = self.get_random_location()
             if self.is_valid_position(x, y, Game.POWERUP_SIZE):
                 self.powerup = pygame.Rect(
-                        (x, y),
+                        (int(x), int(y)),
                         (Game.POWERUP_SIZE, Game.POWERUP_SIZE))
                 return
 
@@ -104,11 +106,11 @@ class Game:
         bottom_right = (x + size, y + size)
         middle = (x + size / 2, y + size / 2)
         for pos_x, pos_y in [top_left, top_middle, top_right, bottom_left, bottom_middle, bottom_right, middle]:
-            if self.is_outside_maze(pos_x, pos_y, size) or is_black(self.get_color_at(pos_x, pos_y)): 
+            if self.is_outside_maze(pos_x, pos_y) or is_black(self.get_color_at(pos_x, pos_y)): 
                 return False
         return True
 
-    def is_outside_maze(self, x, y, size):
+    def is_outside_maze(self, x, y):
         return (x < 0 
                 or x > self.screen.get_width() - 1 
                 or y < 0 

@@ -16,14 +16,12 @@ player_2 = Player("firebrick", PLAYER_2_START_X, PLAYER_2_START_Y, [pygame.K_UP,
 game = Game(WIDTH, HEIGHT, player_1, player_2)
 
 pygame.init()
-SPAWN_POWERUP_EVENT = pygame.USEREVENT
-pygame.time.set_timer(SPAWN_POWERUP_EVENT, 10000)
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == SPAWN_POWERUP_EVENT:
+        if event.type == Game.SPAWN_POWERUP:
             game.create_powerup()
 
     game.refresh_maze()    
@@ -50,6 +48,8 @@ while running:
         if keys[pygame.K_ESCAPE]:
             player_1.set_position(PLAYER_1_START_X, PLAYER_1_START_Y)
             player_2.set_position(PLAYER_2_START_X, PLAYER_2_START_Y)
+            player_1.speed = Player.INITIAL_SPEED
+            player_2.speed = Player.INITIAL_SPEED
             
         
     pygame.display.flip()
