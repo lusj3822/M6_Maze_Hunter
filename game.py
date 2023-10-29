@@ -24,7 +24,6 @@ class Game:
           self.maze = pygame.image.load("maze_3.png").convert()
           self.maze = pygame.transform.scale(self.maze, (width, height))
           self.rotate_maze();
-          self.refresh_maze()
           self.player1 = player1
           self.player2 = player2
           pygame.time.set_timer(Game.SPAWN_POWERUP, 10000)
@@ -48,6 +47,7 @@ class Game:
     def rotate_maze(self):
         degrees_of_rotation = [0, 90, 180, 270]
         self.maze = pygame.transform.rotate(self.maze, random.choice(degrees_of_rotation))
+        self.refresh_maze()
 
     def draw_fog_of_war(self):
         surface1 = self.screen.convert_alpha()
