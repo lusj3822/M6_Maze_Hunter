@@ -34,8 +34,8 @@ def play_game():
         elif game.state == GameState.PRISONER_WON:
             game.draw_game_over_screen("Prisoner won")
         if keys[pygame.K_ESCAPE]:
-            game.reset()
             game.rotate_maze()
+            game.reset()
     else:
         game.player_movement(game.player1)
         game.player_movement(game.player2)
