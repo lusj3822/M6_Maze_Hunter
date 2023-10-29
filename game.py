@@ -85,7 +85,9 @@ class Game:
         pygame.draw.rect(self.screen, player.color, pygame.Rect(player.pos, (player.size, player.size)))
           
     def draw_start_screen(self):
-        self.screen.fill((0,0,0))
+        start_screen_image = pygame.image.load("maze_menu_screen.png")
+        start_screen_image = pygame.transform.scale(start_screen_image, (749,749))
+        self.screen.blit(start_screen_image, (0,0))
         width = self.screen.get_width()
         height = self.screen.get_height()
         title_font = pygame.font.SysFont('arial', 60)
