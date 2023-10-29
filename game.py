@@ -39,6 +39,7 @@ class Game:
     def reset(self):
         self.player1.speed = Player.INITIAL_SPEED
         self.player2.speed = Player.INITIAL_SPEED
+        self.powerup = None
         self.start()
 
     def refresh_maze(self):
