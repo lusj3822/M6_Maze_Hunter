@@ -2,6 +2,7 @@ import pygame
 from enum import Enum
 from random import randrange
 from player import Player
+import random
 
 class Direction(Enum):
     UP = 0
@@ -43,6 +44,10 @@ class Game:
     def refresh_maze(self):
         self.screen.blit(self.maze, (0, 0))
 
+    def rotate_maze(self):
+        degrees_of_rotation = [0, 90, 180, 270]
+        self.maze = pygame.transform.rotate(self.maze, random.choice(degrees_of_rotation))
+
     def draw_fog_of_war(self):
         surface1 = self.screen.convert_alpha()
         fog_of_war_size = 50
@@ -78,6 +83,23 @@ class Game:
     def draw_player(self, player):
         pygame.draw.rect(self.screen, player.color, pygame.Rect(player.pos, (player.size, player.size)))
           
+    def draw_start_screen(self):
+        self.screen.fill((0,0,0))
+        width = self.screen.get_width()
+        height = self.screen.get_height()
+        title_font = pygame.font.SysFont('arial', 60)
+        option_font = pygame.font.SysFont('arial', 40)
+        game_title = title_font.render("Maze Hunter", True, ("white"))
+        light_mode = option_font.render("1: Light mode", True, ("white"))
+        dark_mode = option_font.render("2: Dark mode", True, ("White"))
+        quit_option = option_font.render("3: Quit", True, ("white"))
+        self.screen.blit(game_title, ((width/2 - game_title.get_width()/2), (height/4)) )
+        self.screen.blit(light_mode, ((width/2 - light_mode.get_width()/2), (height/2.5)))
+        self.screen.blit(dark_mode, ((width/2 - dark_mode.get_width()/2), (height/2)))
+        self.screen.blit(quit_option, ((width/2 - quit_option.get_width()/2), (height/1.5)))
+        pygame.display.update()
+
+
     def draw_game_over_screen(self, text):
        font = pygame.font.SysFont('arial', 40)
        title = font.render(text, True, ("red"))
