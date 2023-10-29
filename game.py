@@ -23,6 +23,7 @@ class Game:
           self.screen = pygame.display.set_mode((width, height))
           self.maze = pygame.image.load("maze_3.png").convert()
           self.maze = pygame.transform.scale(self.maze, (width, height))
+          self.rotate_maze();
           self.refresh_maze()
           self.player1 = player1
           self.player2 = player2

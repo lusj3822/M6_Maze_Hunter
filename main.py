@@ -41,9 +41,6 @@ def play_game():
         game.player_movement(game.player2)
 
 menu_option = "start_screen"
-
-game.rotate_maze()
-
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
